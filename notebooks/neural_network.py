@@ -20,7 +20,8 @@ X = df.drop('charges', axis=1).values
 y = df['charges'].values.reshape(-1, 1)
 
 # separamos features y objetivo, convertimos a float32 y normalizamos las columnas
-# la normalización evita que las características con escala grande dominen el gradiente
+# convertimos a float32 para que numpy/pytorch opere correctamente
+X = X.astype(np.float32)
 y = y.astype(np.float32)
 
 # normalizar features
