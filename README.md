@@ -83,6 +83,8 @@ La red neuronal mostró una mejor capacidad de aprendizaje y una convergencia m�
 
 ## Conclusión
 
+**Los resultados y métricas se encuentran en el directorio de reports**
+
 La regresión lineal no fue suficiente para alcanzar el loss objetivo, ya que se estabilizó alrededor de 35,000,000 incluso después de un número elevado de epochs.
 
 En cambio, la red neuronal simple logró capturar patrones más complejos en los datos y alcanzar el loss requerido.
