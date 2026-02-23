@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import pandas as pd
 import numpy as np
+from sklearn import metrics
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -83,3 +84,26 @@ for epoch in range(n_iters):
         break
 
 print("\nFinal Loss:", loss.item())
+
+# guardar métricas y predicciones en reports/
+REPORTS_DIR = os.path.join(BASE_DIR, 'reports')
+os.makedirs(REPORTS_DIR, exist_ok=True)
+
+y_pred = outputs.detach().cpu().numpy().ravel()
+y_true = y.detach().cpu().numpy().ravel()
+
+final_mse = metrics.mean_squared_error(y_true, y_pred)
+final_mae = metrics.mean_absolute_error(y_true, y_pred)
+final_rmse = np.sqrt(final_mse)
+final_r2 = metrics.r2_score(y_true, y_pred)
+
+metrics_df = pd.DataFrame({
+    'metric': ['final_loss', 'mse', 'mae', 'rmse', 'r2'],
+    'value': [loss.item(), final_mse, final_mae, final_rmse, final_r2]
+})
+metrics_df.to_csv(os.path.join(REPORTS_DIR, 'neural_metrics.csv'), index=False)
+
+pd.DataFrame({'Actual': y_true, 'Predicted': y_pred}).to_csv(os.path.join(REPORTS_DIR, 'neural_evaluation_results.csv'), index=False)
+
+print('saved neural metrics to', os.path.join(REPORTS_DIR, 'neural_metrics.csv'))
+print('saved neural evaluation results to', os.path.join(REPORTS_DIR, 'neural_evaluation_results.csv'))

@@ -3,6 +3,7 @@ import torch.nn as nn
 import pandas as pd
 import numpy as np
 import os
+from sklearn import metrics
 
 # cargamos y preprocesamos los datos
 # en esta sección cargamos el csv, aplicamos codificación para variables categóricas,
@@ -83,3 +84,28 @@ for epoch in range(n_iters):
         break
 
 print("\nfinal loss:", loss.item())
+
+# guardamos métricas y predicciones finales en reports/
+REPORTS_DIR = os.path.join(BASE_DIR, 'reports')
+os.makedirs(REPORTS_DIR, exist_ok=True)
+
+# predicción final sobre todo el conjunto (última salida calculada)
+y_pred = outputs.detach().cpu().numpy().ravel()
+y_true = y.detach().cpu().numpy().ravel()
+
+train_mse = metrics.mean_squared_error(y_true, y_pred)
+train_mae = metrics.mean_absolute_error(y_true, y_pred)
+train_rmse = np.sqrt(train_mse)
+train_r2 = metrics.r2_score(y_true, y_pred)
+
+metrics_df = pd.DataFrame({
+    'metric': ['final_loss', 'mse', 'mae', 'rmse', 'r2'],
+    'value': [loss.item(), train_mse, train_mae, train_rmse, train_r2]
+})
+metrics_df.to_csv(os.path.join(REPORTS_DIR, 'linear_metrics.csv'), index=False)
+
+results_df = pd.DataFrame({'Actual': y_true, 'Predicted': y_pred})
+results_df.to_csv(os.path.join(REPORTS_DIR, 'linear_evaluation_results.csv'), index=False)
+
+print('saved linear metrics to', os.path.join(REPORTS_DIR, 'linear_metrics.csv'))
+print('saved linear evaluation results to', os.path.join(REPORTS_DIR, 'linear_evaluation_results.csv'))
