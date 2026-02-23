@@ -47,7 +47,9 @@ A pesar de aplicar normalización y utilizar el optimizador Adam para mejorar la
 
 El loss (MSE en escala original) se estabilizó aproximadamente en:
 
-~35,000,000
+~36,000,000
+
+![alt text](image.png)
 
 Incluso en epochs avanzados (cercanos a 30,000), el valor del loss dejó de disminuir y presentó un comportamiento de meseta.
 
@@ -72,6 +74,8 @@ La arquitectura permitió capturar relaciones no lineales entre variables como:
 Con esta implementación, el modelo sí logró alcanzar el objetivo:
 
 Loss ≤ 19,000,000
+
+![alt text](image-1.png)
 
 La red neuronal mostró una mejor capacidad de aprendizaje y una convergencia más estable en comparación con la regresión lineal.
 
