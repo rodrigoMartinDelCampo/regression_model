@@ -4,7 +4,7 @@ import torch.nn as nn
 import pandas as pd
 import numpy as np
 from sklearn import metrics
-
+import matplotlib.pyplot as plt 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "data", "insurance.csv")
@@ -64,7 +64,7 @@ target_loss = 19_000_000
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-
+historial_loss = [] 
 for epoch in range(n_iters):
 
 # bucle de entrenamiento:
@@ -75,6 +75,8 @@ for epoch in range(n_iters):
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
+
+    historial_loss.append(loss.item()) 
 
     if (epoch + 1) % 1000 == 0:
         print(f'Epoch [{epoch+1}/{n_iters}] Loss: {loss.item():.2f}')
@@ -107,3 +109,14 @@ pd.DataFrame({'Actual': y_true, 'Predicted': y_pred}).to_csv(os.path.join(REPORT
 
 print('saved neural metrics to', os.path.join(REPORTS_DIR, 'neural_metrics.csv'))
 print('saved neural evaluation results to', os.path.join(REPORTS_DIR, 'neural_evaluation_results.csv'))
+
+plt.figure(figsize=(10, 6))
+plt.plot(historial_loss, color='blue', label='Error de la Red Neuronal')
+plt.axhline(y=19000000, color='red', linestyle='--', label='Meta: 19 Millones')
+plt.title('Descenso del Error (Loss) - Red Neuronal')
+plt.xlabel('Épocas')
+plt.ylabel('MSE Loss')
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.savefig(os.path.join(BASE_DIR, 'reports', 'curva_aprendizaje_nn.png')) # Guarda la imagen
+plt.show()

@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import os
 from sklearn import metrics
+import matplotlib.pyplot as plt
 
 # cargamos y preprocesamos los datos
 # en esta sección cargamos el csv, aplicamos codificación para variables categóricas,
@@ -12,6 +13,7 @@ from sklearn import metrics
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR, "data", "insurance.csv")
 
+historial_loss = []
 df = pd.read_csv(DATA_PATH)
 
 # codificamos variables categóricas con one-hot para convertir texto en números
@@ -69,6 +71,8 @@ for epoch in range(n_iters):
     # calculamos la pérdida media cuadrática entre la predicción y el valor real
     loss = criterion(outputs, y)
 
+    historial_loss.append(loss.item())
+
     # backward: limpiamos gradientes, computamos gradientes y actualizamos parámetros
     optimizer.zero_grad()  # por seguridad, limpiamos los gradientes acumulados
     loss.backward()        # calculamos gradientes mediante backpropagation
@@ -109,3 +113,11 @@ results_df.to_csv(os.path.join(REPORTS_DIR, 'linear_evaluation_results.csv'), in
 
 print('saved linear metrics to', os.path.join(REPORTS_DIR, 'linear_metrics.csv'))
 print('saved linear evaluation results to', os.path.join(REPORTS_DIR, 'linear_evaluation_results.csv'))
+
+plt.plot(historial_loss)
+plt.title('Descenso del Error (Loss) durante el Entrenamiento')
+plt.xlabel('Épocas')
+plt.ylabel('MSE Loss')
+plt.axhline(y=19000000, color='r', linestyle='--', label='Meta: 19 Millones')
+plt.legend()
+plt.show()
